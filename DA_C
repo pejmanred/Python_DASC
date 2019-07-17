@@ -1,0 +1,64 @@
+import random
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+#sns.set()
+rl=[random.randrange(18) for _ in range(100)]
+
+print(rl)
+
+
+n=int(np.sqrt(len(rl)))
+plt.hist(rl)
+plt.show()
+#-------------------------------ecdf
+def ecdf(rl):
+    x=np.sort(rl)
+    n=len(rl)
+    y=np.arange(1,n+1)/n
+    return x,y
+
+#plt.plot(x,y,marker=".",linestyle='none')
+#--------------------------------------- Scatter plot and correlation
+np.random.seed(1)
+x=np.random.randint(0,50,1000)
+y=x+np.random.normal(0,10,1000)
+np.corrcoef(x,y)
+plt.scatter(x,y)
+
+df = pd.DataFrame({'a': np.random.randint(0, 50, 1000)})
+df['b'] = df['a'] + np.random.normal(0, 10, 1000) # positively correlated with 'a'
+df['c'] = 100 - df['a'] + np.random.normal(0, 5, 1000) # negatively correlated with 'a'
+df['d'] = np.random.randint(0, 50, 1000) # not correlated with 'a'
+df.corr()
+pd.scatter_matrix(df, figsize=(10, 10))
+
+plt.matshow(df.corr())
+plt.xticks(range(len(df.columns)), df.columns)
+plt.yticks(range(len(df.columns)), df.columns)
+plt.colorbar()
+
+#-------------------------------------------------------------BootStarp
+rainfall=np.random.randint(491,1146,133)
+for _ in range(50):
+    # Generate bootstrap sample: bs_sample
+    bs_sample = np.random.choice(rainfall, size=len(rainfall))
+
+    # Compute and plot ECDF from bootstrap sample
+    x, y = ecdf(bs_sample)
+    _ = plt.plot(x, y, marker='.', linestyle='none',
+                 color='gray', alpha=0.1)
+
+# Compute and plot ECDF from original data
+x, y = ecdf(rainfall)
+_ = plt.plot(x, y, marker='.')
+
+# Make margins and label axes
+plt.margins(0.02)
+_ = plt.xlabel('yearly rainfall (mm)')
+_ = plt.ylabel('ECDF')
+
+# Show the plot
+plt.show()
